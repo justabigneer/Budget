@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}About - Budgetly{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="mb-4">
+            <i class="bi bi-info-circle me-3"></i>About Budgetly
+        </h1>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="text-primary">Our Mission</h3>
+                <p class="lead">
+                    Budgetly is designed to help individuals take control of their personal finances through simple, 
+                    intuitive budget management tools. We believe that financial wellness should be accessible to everyone.
+                </p>
+                
+                <h3 class="text-primary mt-4">What We Offer</h3>
+                <ul class="list-unstyled">
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <strong>Budget Planning:</strong> Set monthly income and savings goals
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <strong>Expense Categorization:</strong> Organize expenses with default and custom categories
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <strong>Visual Analytics:</strong> Understand spending patterns with charts and graphs
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <strong>Goal Tracking:</strong> Monitor progress toward your savings objectives
+                    </li>
+                    <li class="mb-2">
+                        <i class="bi bi-check-circle text-success me-2"></i>
+                        <strong>Secure & Private:</strong> Your financial data is protected and private
+                    </li>
+                </ul>
+                
+                <h3 class="text-primary mt-4">Technology</h3>
+                <p>
+                    Budgetly is built using modern web technologies including Django, Bootstrap, and Chart.js 
+                    to provide a fast, responsive, and user-friendly experience across all devices.
+                </p>
+                
+                <h3 class="text-primary mt-4">Get Started Today</h3>
+                <p>
+                    Ready to transform your financial habits? Creating an account is free and takes less than a minute. 
+                    Start tracking your expenses and working toward your financial goals today.
+                </p>
+                
+                {% if not user.is_authenticated %}
+                <div class="mt-4">
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">
+                        <i class="bi bi-person-plus me-2"></i>Sign Up Now
+                    </a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline-primary btn-lg ms-2">
+                        <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-bar-chart me-2"></i>Key Statistics</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-12 mb-3">
+                        <div class="h2 text-primary">8</div>
+                        <small class="text-muted">Default Categories</small>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <div class="h2 text-primary">∞</div>
+                        <small class="text-muted">Custom Categories</small>
+                    </div>
+                    <div class="col-12 mb-3">
+                        <div class="h2 text-primary">100%</div>
+                        <small class="text-muted">Free to Use</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-question-circle me-2"></i>Need Help?</h5>
+            </div>
+            <div class="card-body">
+                <p>
+                    If you have questions about using Budgetly or need assistance getting started, 
+                    our documentation covers all the features and common use cases.
+                </p>
+                <p class="mb-0">
+                    <strong>Features:</strong><br>
+                    • Responsive design for all devices<br>
+                    • Secure user authentication<br>
+                    • Export capabilities<br>
+                    • Multiple chart types
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

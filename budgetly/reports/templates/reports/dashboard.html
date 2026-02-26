@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Budgetly{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h2 class="mb-4"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h2>
+    </div>
+</div>
+
+<!-- Budget Overview Cards -->
+{% if budget %}
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h5 class="text-primary">Monthly Income</h5>
+                <h3>Nrs{{ budget.monthly_income }}</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h5 class="text-success">Savings Goal</h5>
+                <h3>Nrs{{ budget.savings_goal }}</h3>
+                <small class="text-muted">{{ budget.savings_percentage|floatformat:1 }}% of income</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center dashboard-card">
+            <div class="card-body">
+                <h5 class="text-warning">Total Spent</h5>
+                <h3>Nrs{{ total_spent|floatformat:2 }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-warning">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>No Budget Set:</strong> Please <a href="{% url 'budget:setup' %}" class="alert-link">create a budget</a> to get started with expense tracking.
+</div>
+{% endif %}
+
+<!-- Savings Goal Analysis -->
+{% if savings_analysis %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-target me-2"></i>Savings Goal Analysis</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6 class="text-muted">Target Savings</h6>
+                            <h4 class="text-primary">Nrs{{ savings_analysis.target_savings|floatformat:2 }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6 class="text-muted">Actual Savings</h6>
+                            <h4 class="{% if savings_analysis.goal_met %}text-success{% else %}text-warning{% endif %}">
+                                Nrs{{ savings_analysis.actual_savings|floatformat:2 }}
+                            </h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="text-center">
+                            <h6 class="text-muted">Achievement</h6>
+                            <h4 class="{% if savings_analysis.goal_met %}text-success{% else %}text-danger{% endif %}">
+                                {{ savings_analysis.achievement_percentage|floatformat:1 }}%
+                            </h4>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    {% if savings_analysis.status == 'exceeded' %}
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>Savings Goal Exceeded!</strong><br>
+                            You saved <strong>Nrs{{ savings_analysis.excess_amount|floatformat:2 }}</strong> more than your goal.
+                            That's <strong>{{ savings_analysis.excess_percentage|floatformat:1 }}%</strong> above your target!
+                        </div>
+                    {% elif savings_analysis.status == 'met' %}
+                        <div class="alert alert-success">
+                            <i class="bi bi-check-circle-fill me-2"></i>
+                            <strong>Savings Goal Met!</strong><br>
+                            Congratulations! You've reached your savings target of Nrs{{ savings_analysis.target_savings|floatformat:2 }}.
+                        </div>
+                    {% elif savings_analysis.status == 'missed' %}
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            <strong>Savings Goal Not Met</strong><br>
+                            You're <strong>Nrs{{ savings_analysis.shortfall_amount|floatformat:2 }}</strong> short of your goal.
+                            That's <strong>{{ savings_analysis.shortfall_percentage|floatformat:1 }}%</strong> below your target.
+                            <br><small class="text-muted">Consider reducing expenses or adjusting your savings goal.</small>
+                        </div>
+                    {% elif savings_analysis.status == 'no_goal' %}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            <strong>No Savings Goal Set</strong><br>
+                            You have Nrs{{ savings_analysis.actual_savings|floatformat:2 }} available for savings.
+                            <a href="{% url 'budget:setup' %}" class="alert-link">Set a savings goal</a> to track your progress.
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Progress Bar -->
+                {% if savings_analysis.target_savings > 0 %}
+                <div class="mt-3">
+                    <div class="d-flex justify-content-between mb-1">
+                        <span class="text-muted">Progress to Goal</span>
+                        <span class="text-muted">{{ savings_analysis.achievement_percentage|floatformat:1 }}%</span>
+                    </div>
+                    <div class="progress" style="height: 10px;">
+                        <div class="progress-bar {% if savings_analysis.goal_met %}bg-success{% else %}bg-warning{% endif %}" 
+                             role="progressbar" 
+                             style="width: {% if savings_analysis.achievement_percentage > 100 %}100{% else %}{{ savings_analysis.achievement_percentage|floatformat:0 }}{% endif %}%">
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Expense Chart -->
+{% if chart_labels %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="bi bi-pie-chart me-2"></i>Expense Breakdown</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="expenseChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Recent Expenses -->
+{% if recent_expenses %}
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Recent Expenses</h5>
+                <a href="{% url 'expenses:list' %}" class="btn btn-sm btn-outline-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="list-group list-group-flush">
+                    {% for expense in recent_expenses %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="mb-1">{{ expense.description }}</h6>
+                            <p class="mb-1 text-muted small">{{ expense.category.name }}</p>
+                            <small class="text-muted">{{ expense.date }}</small>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">Nrs{{ expense.amount }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if chart_labels %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('expenseChart').getContext('2d');
+const myChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+        labels: {{ chart_labels|safe }},
+        datasets: [{
+            data: {{ chart_data|safe }},
+            backgroundColor: [
+                '#9381FF',
+                '#FFB3BA',
+                '#BAFFC9',
+                '#BAE1FF',
+                '#FFFFBA',
+                '#FFDFBA',
+                '#D4A5FF',
+                '#A5D4FF'
+            ],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'right',
+                labels: {
+                    padding: 20,
+                    usePointStyle: true
+                }
+            }
+        }
+    }
+});
+</script>
+{% endif %}
+{% endblock %}

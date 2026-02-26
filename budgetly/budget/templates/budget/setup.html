@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+
+{% block title %}Budget Setup - Budgetly{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8 mx-auto">
+        <div class="card">
+            <div class="card-header">
+                <h4><i class="bi bi-piggy-bank me-2"></i>Budget Setup</h4>
+                <small class="text-muted">Set your monthly income and savings goals</small>
+            </div>
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {{ form.non_field_errors }}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.monthly_income.id_for_label }}" class="form-label">
+                                    <i class="bi bi-cash-stack me-1"></i>Monthly Income *
+                                </label>
+                                {{ form.monthly_income }}
+                                {% if form.monthly_income.errors %}
+                                    <div class="text-danger small">{{ form.monthly_income.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">Enter your monthly income in NPR</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="{{ form.savings_goal.id_for_label }}" class="form-label">
+                                    <i class="bi bi-piggy-bank me-1"></i>Savings Goal
+                                </label>
+                                {{ form.savings_goal }}
+                                {% if form.savings_goal.errors %}
+                                    <div class="text-danger small">{{ form.savings_goal.errors.0 }}</div>
+                                {% endif %}
+                                <div class="form-text">How much do you want to save this month?</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="{{ form.month.id_for_label }}" class="form-label">
+                            <i class="bi bi-calendar me-1"></i>Month *
+                        </label>
+                        {{ form.month }}
+                        {% if form.month.errors %}
+                            <div class="text-danger small">{{ form.month.errors.0 }}</div>
+                        {% endif %}
+                        <div class="form-text">Select the month for this budget</div>
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-2"></i>Save Budget
+                        </button>
+                        <a href="{% url 'reports:dashboard' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        {% if budget %}
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5><i class="bi bi-info-circle me-2"></i>Budget Summary</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h6 class="text-primary">Monthly Income</h6>
+                        <h4>Nrs{{ budget.monthly_income|floatformat:2 }}</h4>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-success">Savings Goal</h6>
+                        <h4>Nrs{{ budget.savings_goal|floatformat:2 }}</h4>
+                        <small class="text-muted">{{ budget.savings_percentage|floatformat:1 }}% of income</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6 class="text-info">Available Budget</h6>
+                        <h4>Nrs{{ budget.available_budget|floatformat:2 }}</h4>
+                        <small class="text-muted">After savings</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

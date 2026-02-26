@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load form_tags %}
+
+{% block title %}Expenses - Budgetly{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-receipt me-2"></i>My Expenses</h2>
+            <a href="{% url 'expenses:add' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>Add Expense
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        {% if expenses %}
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Category</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.date|date:"M d, Y" }}</td>
+                        <td><span class="badge bg-secondary">{{ expense.category.name }}</span></td>
+                        <td>{{ expense.description }}</td>
+                        <td class="text-end">Nrs{{ expense.amount }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-receipt text-muted" style="font-size: 4rem;"></i>
+            <h4 class="text-muted mt-3">No expenses yet</h4>
+            <p class="text-muted">Start tracking your expenses to see them here.</p>
+            <a href="{% url 'expenses:add' %}" class="btn btn-primary">Add Your First Expense</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
